@@ -1,6 +1,6 @@
 ﻿namespace PanoramaMaker
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInputImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.savePanoramaAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,7 +42,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.calculateKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -54,7 +54,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(782, 28);
+            this.menuStrip.Size = new System.Drawing.Size(1262, 28);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -76,6 +76,13 @@
             this.openInputImagesToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
             this.openInputImagesToolStripMenuItem.Text = "Load input images";
             this.openInputImagesToolStripMenuItem.Click += new System.EventHandler(this.openInputImagesToolStripMenuItem_Click);
+            // 
+            // calculateKeypointsToolStripMenuItem
+            // 
+            this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
+            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
+            this.calculateKeypointsToolStripMenuItem.Text = "Calculate keypoints";
+            this.calculateKeypointsToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsToolStripMenuItem_Click);
             // 
             // savePanoramaAsToolStripMenuItem
             // 
@@ -123,7 +130,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 18);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(752, 188);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1232, 188);
             this.flowLayoutPanel1.TabIndex = 1;
             this.flowLayoutPanel1.WrapContents = false;
             // 
@@ -134,7 +141,7 @@
             this.groupBox1.Controls.Add(this.flowLayoutPanel1);
             this.groupBox1.Location = new System.Drawing.Point(12, 47);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(758, 209);
+            this.groupBox1.Size = new System.Drawing.Size(1238, 209);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Input images";
@@ -143,9 +150,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 534);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 702);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(782, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1262, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -154,25 +161,18 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // calculateKeypointsToolStripMenuItem
-            // 
-            this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
-            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
-            this.calculateKeypointsToolStripMenuItem.Text = "Calculate keypoints";
-            this.calculateKeypointsToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsToolStripMenuItem_Click);
-            // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 556);
+            this.ClientSize = new System.Drawing.Size(1262, 724);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(640, 480);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "PanoramaMaker";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
