@@ -8,29 +8,46 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections;
 using OpenSURFcs;
+using Accord.Imaging;
+using AForge;
+using Accord.Imaging.Filters;
+using System.Drawing.Imaging;
 
 namespace PanoramaMaker
 {
     public partial class MainForm : Form
     {
         List<Image> input_images;       //input images
-        List<List<IPoint>> keypoints;   //each image has two list of keypoints (left and right side) except the first and the last one (only right/left side)
+        List<List<IntPoint>> keypoints;   //each image has two lists of keypoints (left and right side) except the first and the last one (only right/left side)
+
         enum ImageSection {Left, Right};
-        const int cropWidth = 500;
+        const int cropWidthPercent = 20; //the percentage of picture's area (next to the edge) to be searched for keypoints
+        int cropWidth;
 
         public MainForm()
         {
             InitializeComponent();
 
             input_images = new List<Image>();
-            keypoints = new List<List<IPoint>>();
+            keypoints = new List<List<IntPoint>>();
+        }
+
+        private static Bitmap Get24bppRgb(Image image)
+        {
+            var bitmap = new Bitmap(image);
+            var bitmap24 = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format24bppRgb);
+            using (var gr = Graphics.FromImage(bitmap24))
+            {
+                gr.DrawImage(bitmap, new Rectangle(0, 0, bitmap24.Width, bitmap24.Height));
+            }
+            return bitmap24;
         }
 
         #region MENU_CLICK_HANDLERS
         private void openInputImagesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             input_images = new List<Image>();
-            keypoints = new List<List<IPoint>>();
+            keypoints = new List<List<IntPoint>>();
 
             foreach (Control control in flowLayoutPanel1.Controls.Cast<Control>().ToList())
             {
@@ -49,12 +66,21 @@ namespace PanoramaMaker
                 }
             }
 
+            cropWidth = input_images[0].Width * cropWidthPercent / 100;
             toolStripStatusLabel1.Text = "Input images loaded. Next you should calculate image keypoints.";
         }
 
         private void calculateKeypointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            calculateKeypoints();
+            DialogResult dialog_result = MessageBox.Show("Detect keypoints using SURF algorithm? (Harris corner detector will be used otherwise)", "Preferred method", MessageBoxButtons.YesNo);
+            if (dialog_result == DialogResult.Yes)
+                detectKeypoints_SURF();
+            else 
+            if (dialog_result == DialogResult.No)
+                detectKeypoints_Harris();
+            else
+                return;
+
             DrawKeypoints();
             toolStripStatusLabel1.Text = "Keypoints calculated. Next you should merge images.";
         }
@@ -73,8 +99,6 @@ namespace PanoramaMaker
 
         private void ShowLargeImage(object sender, MouseEventArgs e, Image image)
         {
-            
-
             ZoomPicBox pb = new ZoomPicBox();
             pb.Dock = DockStyle.Fill;
             pb.AutoScroll = true;
@@ -110,25 +134,51 @@ namespace PanoramaMaker
         }
 
         /*
-         * Calculate keypoints in images Using OpenSURF library
+         * Detect keypoints in images using OpenSURF library
          * http://www.chrisevansdev.com/computer-vision-opensurf.html
          */
-        private void calculateKeypoints()
+        private void detectKeypoints_SURF()
         {
             IntegralImage integralImage;
-            for(int i=0; i<input_images.Count; i++)
+            for (int i = 0; i < input_images.Count; i++)
             {
-                if(i != 0) //if not first image, calculate left side keypoints
+                if (i != 0) //if not first image, calculate left side keypoints
                 {
                     integralImage = IntegralImage.FromImage(GetCroppedImage(input_images[i], ImageSection.Left));
-                    keypoints.Add(FastHessian.getIpoints(0.0002f, 5, 2, integralImage));
-                    SurfDescriptor.DecribeInterestPoints(keypoints.Last(), false, false, integralImage);
+                    List<IPoint> surf_keypoints = FastHessian.getIpoints(0.001f, 5, 2, integralImage);
+
+                    keypoints.Add(new List<IntPoint>());
+                    foreach (IPoint p in surf_keypoints)
+                        keypoints.Last().Add(new IntPoint((int)p.x, (int)p.y));
                 }
                 if (i != input_images.Count - 1) //if not last image, calculate right side keypoints
                 {
                     integralImage = IntegralImage.FromImage(GetCroppedImage(input_images[i], ImageSection.Right));
-                    keypoints.Add(FastHessian.getIpoints(0.0002f, 5, 2, integralImage));
-                    SurfDescriptor.DecribeInterestPoints(keypoints.Last(), false, false, integralImage);
+                    List<IPoint> surf_keypoints = FastHessian.getIpoints(0.001f, 5, 2, integralImage);
+
+                    keypoints.Add(new List<IntPoint>());
+                    foreach (IPoint p in surf_keypoints)
+                        keypoints.Last().Add(new IntPoint((int)p.x, (int)p.y));
+                }
+            }
+        }
+
+        /*
+         * Detect keypoints in images using Harris corner detector from Accord.NET library
+         * http://accord-framework.net/docs/html/T_Accord_Imaging_HarrisCornersDetector.htm
+         */
+        private void detectKeypoints_Harris()
+        {
+            HarrisCornersDetector harris_detector = new HarrisCornersDetector(0.04f, 500f);
+            for (int i = 0; i < input_images.Count; i++)
+            {
+                if (i != 0) //if not first image, calculate left side keypoints
+                {
+                    keypoints.Add(harris_detector.ProcessImage(GetCroppedImage(input_images[i], ImageSection.Left)));
+                }
+                if (i != input_images.Count - 1) //if not last image, calculate right side keypoints
+                {
+                    keypoints.Add(harris_detector.ProcessImage(GetCroppedImage(input_images[i], ImageSection.Right)));
                 }
             }
         }
@@ -148,11 +198,7 @@ namespace PanoramaMaker
         private void DrawKeypoints()
         {
             Graphics graphics;
-            Pen redPen = new Pen(Color.Red, 2f);
-            Pen bluePen = new Pen(Color.Blue, 2f);
-            Pen orientationPen = new Pen(Color.GreenYellow, 2f);
-            Pen connectionPen = new Pen(Color.Silver, 2f);
-            Pen pen;
+            Pen keypointPen = new Pen(Color.GreenYellow, 2f);
             int keypoints_cntr = 0;
 
             List<Control> pictureBox_thumbnails = flowLayoutPanel1.Controls.Cast<Control>().ToList();
@@ -170,49 +216,47 @@ namespace PanoramaMaker
             {
                 graphics.DrawImage(input_images[i], cumulativeWidth, 0, input_images[i].Width, input_images[i].Height);
 
-                foreach (IPoint keypoint in keypoints[keypoints_cntr++])
+                foreach (IntPoint keypoint in keypoints[keypoints_cntr++])
                 {
-                    int diameter = 2 * Convert.ToInt32(2.5f * keypoint.scale);
+
+                    int diameter = 10;
                     int radius = Convert.ToInt32(diameter / 2f);
 
                     Point center;
-                    if(i == 0) //if this is first image, keypoints are on the right side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.x), Convert.ToInt32(keypoint.y));
+                    if (i == 0) //if this is first image, keypoints are on the right side
+                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
                     else //else keypoints are on the left side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.x), Convert.ToInt32(keypoint.y));
+                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
-                    Point orientation = new Point(Convert.ToInt32(radius * Math.Cos(keypoint.orientation)), Convert.ToInt32(radius * Math.Sin(keypoint.orientation)));
+                    graphics.DrawEllipse(keypointPen, center.X - radius, center.Y - radius, diameter, diameter);
 
-                    pen = keypoint.laplacian > 0 ? bluePen : redPen;
+                    /* Find the matching keypoints (last image)
+                     * Currently not used (Evgen's job)
+                     */
+                    //if (i > 0)
+                    //{
+                    //    float minDistance = float.MaxValue;
+                    //    float tmpDistance;
+                    //    IPoint matchingKeypoint = null;
+                    //    foreach (IPoint keypoint2 in keypoints[keypoints_cntr-2])
+                    //    {
+                    //        tmpDistance = 0;
+                    //        for (int k = 0; k < keypoint.descriptorLength; k++)
+                    //            tmpDistance += (keypoint.descriptor[k] - keypoint2.descriptor[k]) * (keypoint.descriptor[k] - keypoint2.descriptor[k]);
+                    //        tmpDistance = (float)Math.Sqrt(tmpDistance);
+                    //        if (tmpDistance < minDistance)
+                    //        {
+                    //            minDistance = tmpDistance;
+                    //            matchingKeypoint = keypoint2;
+                    //        }
+                    //    }
 
-                    graphics.DrawEllipse(pen, center.X - radius, center.Y - radius, diameter, diameter);
-                    graphics.DrawLine(orientationPen, center.X, center.Y, center.X + orientation.X, center.Y + orientation.Y);
-
-                    //find the matching keypoints (last image)
-                    if (i > 0)
-                    {
-                        float minDistance = float.MaxValue;
-                        float tmpDistance;
-                        IPoint matchingKeypoint = null;
-                        foreach (IPoint keypoint2 in keypoints[keypoints_cntr-2])
-                        {
-                            tmpDistance = 0;
-                            for (int k = 0; k < keypoint.descriptorLength; k++)
-                                tmpDistance += (keypoint.descriptor[k] - keypoint2.descriptor[k]) * (keypoint.descriptor[k] - keypoint2.descriptor[k]);
-                            tmpDistance = (float)Math.Sqrt(tmpDistance);
-                            if (tmpDistance < minDistance)
-                            {
-                                minDistance = tmpDistance;
-                                matchingKeypoint = keypoint2;
-                            }
-                        }
-
-                        if (minDistance < 0.2f) //euclidean distance threshold
-                        {
-                            Point center2 = new Point(Convert.ToInt32(cumulativeWidth - cropWidth + matchingKeypoint.x), Convert.ToInt32(matchingKeypoint.y));
-                            graphics.DrawLine(connectionPen, center, center2);
-                        }
-                    }
+                    //    if (minDistance < 0.2f) //euclidean distance threshold
+                    //    {
+                    //        Point center2 = new Point(Convert.ToInt32(cumulativeWidth - cropWidth + matchingKeypoint.x), Convert.ToInt32(matchingKeypoint.y));
+                    //        graphics.DrawLine(connectionPen, center, center2);
+                    //    }
+                    //}
                 }
                 if (i == 0 || i == input_images.Count - 1) //if this is the first image or last image it has only one side of keypoints
                 {
@@ -220,28 +264,21 @@ namespace PanoramaMaker
                     continue;
                 }
 
-                foreach (IPoint keypoint in keypoints[keypoints_cntr++])
+                foreach (IntPoint keypoint in keypoints[keypoints_cntr++])
                 {
-                    int diameter = 2 * Convert.ToInt32(2.5f * keypoint.scale);
+                    int diameter = 10;
                     int radius = Convert.ToInt32(diameter / 2f);
 
                     Point center;
-                    if (i == input_images.Count -1) //if this is last image, the keypoints are on the left side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.x), Convert.ToInt32(keypoint.y));
+                    if (i == input_images.Count - 1) //if this is last image, the keypoints are on the left side
+                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
                     else //else keypoints are on the right
-                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.x), Convert.ToInt32(keypoint.y));
-                        
-                    Point orientation = new Point(Convert.ToInt32(radius * Math.Cos(keypoint.orientation)), Convert.ToInt32(radius * Math.Sin(keypoint.orientation)));
+                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
-                    pen = keypoint.laplacian > 0 ? bluePen : redPen;
-
-                    graphics.DrawEllipse(pen, center.X - radius, center.Y - radius, diameter, diameter);
-                    graphics.DrawLine(orientationPen, center.X, center.Y, center.X + orientation.X, center.Y + orientation.Y);
+                    graphics.DrawEllipse(keypointPen, center.X - radius, center.Y - radius, diameter, diameter);
                 }
-
                 cumulativeWidth += input_images[0].Width;
             }
-
             ShowThumbnail(mergedImage, true);
         }
     }

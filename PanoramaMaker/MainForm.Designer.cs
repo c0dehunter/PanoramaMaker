@@ -81,7 +81,7 @@
             // 
             this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
             this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
-            this.calculateKeypointsToolStripMenuItem.Text = "Calculate keypoints";
+            this.calculateKeypointsToolStripMenuItem.Text = "Detect keypoints";
             this.calculateKeypointsToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsToolStripMenuItem_Click);
             // 
             // savePanoramaAsToolStripMenuItem
