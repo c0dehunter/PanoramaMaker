@@ -46,8 +46,9 @@
     <Reference Include="Accord.Statistics">
       <HintPath>.\Accord.Statistics.dll</HintPath>
     </Reference>
-    <Reference Include="AForge">
-      <HintPath>.\AForge.dll</HintPath>
+    <Reference Include="AForge, Version=2.1.2.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Accord.Net\Source\Samples\Imaging\Panorama\AForge.dll</HintPath>
     </Reference>
     <Reference Include="AForge.Imaging">
       <HintPath>.\AForge.Imaging.dll</HintPath>

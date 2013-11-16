@@ -42,6 +42,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.matchKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -54,7 +55,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1262, 28);
+            this.menuStrip.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip.Size = new System.Drawing.Size(946, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -63,24 +65,25 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openInputImagesToolStripMenuItem,
             this.calculateKeypointsToolStripMenuItem,
+            this.matchKeypointsToolStripMenuItem,
             this.savePanoramaAsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openInputImagesToolStripMenuItem
             // 
             this.openInputImagesToolStripMenuItem.Name = "openInputImagesToolStripMenuItem";
             this.openInputImagesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openInputImagesToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
+            this.openInputImagesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.openInputImagesToolStripMenuItem.Text = "Load input images";
             this.openInputImagesToolStripMenuItem.Click += new System.EventHandler(this.openInputImagesToolStripMenuItem_Click);
             // 
             // calculateKeypointsToolStripMenuItem
             // 
             this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
-            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
+            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.calculateKeypointsToolStripMenuItem.Text = "Detect keypoints";
             this.calculateKeypointsToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsToolStripMenuItem_Click);
             // 
@@ -88,14 +91,14 @@
             // 
             this.savePanoramaAsToolStripMenuItem.Name = "savePanoramaAsToolStripMenuItem";
             this.savePanoramaAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.savePanoramaAsToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
+            this.savePanoramaAsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.savePanoramaAsToolStripMenuItem.Text = "Save panorama";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(254, 24);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -104,13 +107,13 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(119, 24);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -128,20 +131,23 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.LavenderBlush;
             this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 18);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 15);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1232, 188);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(924, 153);
             this.flowLayoutPanel1.TabIndex = 1;
             this.flowLayoutPanel1.WrapContents = false;
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.flowLayoutPanel1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 47);
+            this.groupBox1.Location = new System.Drawing.Point(9, 38);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1238, 209);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Size = new System.Drawing.Size(928, 170);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Input images";
@@ -150,9 +156,10 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 702);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 566);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1262, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(946, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -161,17 +168,25 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
+            // matchKeypointsToolStripMenuItem
+            // 
+            this.matchKeypointsToolStripMenuItem.Name = "matchKeypointsToolStripMenuItem";
+            this.matchKeypointsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.matchKeypointsToolStripMenuItem.Text = "Match keypoints";
+            this.matchKeypointsToolStripMenuItem.Click += new System.EventHandler(this.matchKeypointsToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1262, 724);
+            this.ClientSize = new System.Drawing.Size(946, 588);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
-            this.MinimumSize = new System.Drawing.Size(640, 480);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinimumSize = new System.Drawing.Size(484, 397);
             this.Name = "MainForm";
             this.Text = "PanoramaMaker";
             this.menuStrip.ResumeLayout(false);
@@ -199,6 +214,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripMenuItem calculateKeypointsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem matchKeypointsToolStripMenuItem;
     }
 }
 
