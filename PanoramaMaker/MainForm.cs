@@ -241,11 +241,11 @@ namespace PanoramaMaker
                     int diameter = 10;
                     int radius = Convert.ToInt32(diameter / 2f);
 
-                    Point center;
+                    System.Drawing.Point center;
                     if (i == 0) //if this is first image, keypoints are on the right side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
+                        center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
                     else //else keypoints are on the left side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
+                        center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
                     keypointCenters[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
 
@@ -291,11 +291,11 @@ namespace PanoramaMaker
                     int diameter = 10;
                     int radius = Convert.ToInt32(diameter / 2f);
 
-                    Point center;
+                    System.Drawing.Point center;
                     if (i == input_images.Count - 1) //if this is last image, the keypoints are on the left side
-                        center = new Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
+                        center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
                     else //else keypoints are on the right
-                        center = new Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
+                        center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
                     keypointCenters[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
 
@@ -314,7 +314,9 @@ namespace PanoramaMaker
 
 
             RansacHomographyEstimator ransac = new RansacHomographyEstimator(0.001, 0.99);
-            CorrelationMatching matcher = new CorrelationMatching(9);
+            CorrelationMatching matcher = new CorrelationMatching(5);
+            
+
             IntPoint[][] matches;
             MatrixH homography;
 
@@ -341,21 +343,22 @@ namespace PanoramaMaker
                 if (i != input_images.Count - 1)
                 {
                     matches = matcher.Match(new Bitmap(input_images[i]), new Bitmap(input_images[i + 1]), keypoints[keypoints_cntr].ToArray(), keypoints[keypoints_cntr + 1].ToArray());
+                    //matches = matcher.Match(keypoints[keypoints_cntr].ToArray(), keypoints[keypoints_cntr + 1].ToArray());
 
                     IntPoint[] correlationPoints1 = matches[0].ToArray();
                     IntPoint[] correlationPoints2 = matches[1].ToArray();
 
                     homography = ransac.Estimate(correlationPoints1, correlationPoints2);
-
+                    
                     // Plot RANSAC results against correlation results
-                    //IntPoint[] inliers1 = correlationPoints1.Submatrix(ransac.Inliers);
+                    //IntPoint[] inliers1 = Accord.Math.Matrix.Submatrix(ransac.Inliers, 0);
                     //IntPoint[] inliers2 = correlationPoints2.Submatrix(ransac.Inliers);
-
+                    
                     PairsMarker pairs = new PairsMarker(correlationPoints1, correlationPoints2);
 
                     for (int j = 0; j < pairs.Points1.Count(); j++)
                     {
-                        graphics.DrawLine(new Pen(Color.GreenYellow, 2f), new Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new Point(correlationPoints2[j].X + (i + 1 )* input_images[i].Width, correlationPoints2[j].Y));
+                        graphics.DrawLine(new Pen(Color.GreenYellow, 2f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
                     }
                   
                     
