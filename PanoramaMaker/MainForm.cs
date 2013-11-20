@@ -12,6 +12,7 @@ using OpenSURFcs;
 using AForge;
 using Accord.Imaging;
 using Accord.Imaging.Filters;
+using Accord.Math;
 
 
 namespace PanoramaMaker
@@ -20,12 +21,16 @@ namespace PanoramaMaker
     {
         List<Image> input_images;       //input images
         List<List<IntPoint>> keypoints;   //each image has two lists of keypoints (left and right side) except the first and the last one (only right/left side)
-        List<List<IntPoint>> keypointCenters; // centers calculated for merged image - added width
+        List<List<IntPoint>> correlationKeypoints; // centers calculated for merged image - added width
+        List<MatrixH> homographyList;
 
+        Bitmap panorama;
 
         enum ImageSection {Left, Right};
-        const int cropWidthPercent = 100; //the percentage of picture's area (next to the edge) to be searched for keypoints
         int cropWidth;
+        int cropWidthPercent = 100;
+
+        private MatrixH homography;
 
         public MainForm()
         {
@@ -33,7 +38,8 @@ namespace PanoramaMaker
 
             input_images = new List<Image>();
             keypoints = new List<List<IntPoint>>();
-            keypointCenters = new List<List<IntPoint>>();
+            correlationKeypoints = new List<List<IntPoint>>();
+            homographyList = new List<MatrixH>();
         }
 
         private static Bitmap Get24bppRgb(Image image)
@@ -76,24 +82,43 @@ namespace PanoramaMaker
 
         }
 
-        private void calculateKeypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void savePanoramaImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dialog_result = MessageBox.Show("Detect keypoints using SURF algorithm? (Harris corner detector will be used otherwise)", "Preferred method", MessageBoxButtons.YesNo);
-            if (dialog_result == DialogResult.Yes)
-                detectKeypoints_SURF();
-            else 
-            if (dialog_result == DialogResult.No)
-                detectKeypoints_Harris();
-            else
-                return;
+            saveFileDialog1.Filter = "Images (*.jpg)|*.jpg|All files (*.*)|*.*";
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                panorama.Save(saveFileDialog1.FileName);
+                panorama.Dispose();
+            }
+        
+        }
 
+        private void calculateKeypointsSURFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            detectKeypoints_SURF();
             DrawKeypoints();
             toolStripStatusLabel1.Text = "Keypoints calculated. Next you should merge images.";
         }
 
+        private void calculateKeypointsHarrisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            detectKeypoints_Harris();
+            DrawKeypoints();
+            toolStripStatusLabel1.Text = "Keypoints calculated. Next you should merge keypoints.";
+        }
+
+
         private void matchKeypointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MatchKeypoints();
+            toolStripStatusLabel1.Text = "Keypoints are matched. Next you should blend images.";
+        }
+
+
+        private void blendImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BlendImages();
+            toolStripStatusLabel1.Text = "Images are blended. You now have panorama image.";
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -163,7 +188,9 @@ namespace PanoramaMaker
                 cropSection = new Rectangle(image.Width - cropWidth, 0, cropWidth, image.Height);
 
             Bitmap sourceImage = new Bitmap(image);
-            return sourceImage.Clone(cropSection, sourceImage.PixelFormat);
+            // DEBUG
+            //return sourceImage.Clone(cropSection, sourceImage.PixelFormat);
+            return sourceImage;
         }
 
         /*
@@ -225,7 +252,7 @@ namespace PanoramaMaker
 
             ClearThumbnails();
 
-            for (int i = 0; i < keypoints.Count; i++) keypointCenters.Add(new List<IntPoint>());
+            for (int i = 0; i < keypoints.Count; i++) correlationKeypoints.Add(new List<IntPoint>());
 
             Bitmap mergedImage = new Bitmap(input_images.Count * input_images[0].Width, input_images[0].Height); //it is assumed the images are of same size!
             graphics = Graphics.FromImage(mergedImage);
@@ -247,38 +274,10 @@ namespace PanoramaMaker
                     else //else keypoints are on the left side
                         center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
-                    keypointCenters[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
-
+                    //correlationKeypoints[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
 
                     graphics.DrawEllipse(keypointPen, center.X - radius, center.Y - radius, diameter, diameter);
 
-                    /* Find the matching keypoints (last image)
-                     * Currently not used (Evgen's job)
-                     */
-                    //if (i > 0)
-                    //{
-                    //    float minDistance = float.MaxValue;
-                    //    float tmpDistance;
-                    //    IPoint matchingKeypoint = null;
-                    //    foreach (IPoint keypoint2 in keypoints[keypoints_cntr-2])
-                    //    {
-                    //        tmpDistance = 0;
-                    //        for (int k = 0; k < keypoint.descriptorLength; k++)
-                    //            tmpDistance += (keypoint.descriptor[k] - keypoint2.descriptor[k]) * (keypoint.descriptor[k] - keypoint2.descriptor[k]);
-                    //        tmpDistance = (float)Math.Sqrt(tmpDistance);
-                    //        if (tmpDistance < minDistance)
-                    //        {
-                    //            minDistance = tmpDistance;
-                    //            matchingKeypoint = keypoint2;
-                    //        }
-                    //    }
-
-                    //    if (minDistance < 0.2f) //euclidean distance threshold
-                    //    {
-                    //        Point center2 = new Point(Convert.ToInt32(cumulativeWidth - cropWidth + matchingKeypoint.x), Convert.ToInt32(matchingKeypoint.y));
-                    //        graphics.DrawLine(connectionPen, center, center2);
-                    //    }
-                    //}
                 }
                 if (i == 0 || i == input_images.Count - 1) //if this is the first image or last image it has only one side of keypoints
                 {
@@ -297,7 +296,7 @@ namespace PanoramaMaker
                     else //else keypoints are on the right
                         center = new System.Drawing.Point(Convert.ToInt32(cumulativeWidth + input_images[0].Width - cropWidth + keypoint.X), Convert.ToInt32(keypoint.Y));
 
-                    keypointCenters[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
+                    //correlationKeypoints[keypoints_cntr - 1].Add(new IntPoint(center.X, center.Y));
 
                     graphics.DrawEllipse(keypointPen, center.X - radius, center.Y - radius, diameter, diameter);
                 }
@@ -314,17 +313,16 @@ namespace PanoramaMaker
 
 
             RansacHomographyEstimator ransac = new RansacHomographyEstimator(0.001, 0.99);
-            CorrelationMatching matcher = new CorrelationMatching(5);
+            CorrelationMatching matcher = new CorrelationMatching(9);
             
-
             IntPoint[][] matches;
-            MatrixH homography;
+            homographyList = new List<MatrixH>();
+
 
             Graphics graphics;
             Pen keypointPen = new Pen(Color.GreenYellow, 2f);
             int keypoints_cntr = 0;
 
-            ClearThumbnails();
 
             Bitmap mergedImage = new Bitmap(input_images.Count * input_images[0].Width, input_images[0].Height); //it is assumed the images are of same size!
             graphics = Graphics.FromImage(mergedImage);
@@ -343,22 +341,31 @@ namespace PanoramaMaker
                 if (i != input_images.Count - 1)
                 {
                     matches = matcher.Match(new Bitmap(input_images[i]), new Bitmap(input_images[i + 1]), keypoints[keypoints_cntr].ToArray(), keypoints[keypoints_cntr + 1].ToArray());
-                    //matches = matcher.Match(keypoints[keypoints_cntr].ToArray(), keypoints[keypoints_cntr + 1].ToArray());
-
-                    IntPoint[] correlationPoints1 = matches[0].ToArray();
-                    IntPoint[] correlationPoints2 = matches[1].ToArray();
-
-                    homography = ransac.Estimate(correlationPoints1, correlationPoints2);
+   
                     
+                    IntPoint[] correlationPoints1 = matches[0];
+                    IntPoint[] correlationPoints2 = matches[1];
+
+                    
+
                     // Plot RANSAC results against correlation results
-                    //IntPoint[] inliers1 = Accord.Math.Matrix.Submatrix(ransac.Inliers, 0);
-                    //IntPoint[] inliers2 = correlationPoints2.Submatrix(ransac.Inliers);
-                    
-                    PairsMarker pairs = new PairsMarker(correlationPoints1, correlationPoints2);
+                    homography = ransac.Estimate(correlationPoints1, correlationPoints2);
 
-                    for (int j = 0; j < pairs.Points1.Count(); j++)
-                    {
-                        graphics.DrawLine(new Pen(Color.GreenYellow, 2f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
+                    homographyList.Add(homography);
+    
+                    correlationPoints1 = correlationPoints1.Submatrix(ransac.Inliers);
+                    correlationPoints2 = correlationPoints2.Submatrix(ransac.Inliers);
+
+                    // store correlations in list
+                    correlationKeypoints[keypoints_cntr].AddRange(correlationPoints1);
+                    correlationKeypoints[keypoints_cntr + 1].AddRange(correlationPoints2);
+
+                    PairsMarker pairs = new PairsMarker(correlationPoints1, correlationPoints2.Apply(p => new IntPoint(p.X + input_images[i].Width, p.Y)));
+       
+                    for (int j = 0; j < pairs.Points1.Count(); j++) {
+                        if (i % 2 == 0) graphics.DrawLine(new Pen(Color.GreenYellow, 1.5f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
+                        else            graphics.DrawLine(new Pen(Color.Red, 1.5f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
+                        //graphics.DrawLine(new Pen(Color.GreenYellow, 2f), new System.Drawing.Point(pairs.Points1[j].X, pairs.Points1[j].Y), new System.Drawing.Point(pairs.Points2[j].X, pairs.Points2[j].Y));
                     }
                   
                     
@@ -368,8 +375,120 @@ namespace PanoramaMaker
                 cumulativeWidth += input_images[0].Width;
 
             }
+
+
+            ClearThumbnails();
             ShowThumbnail(mergedImage, true);
-       
+            
         }
+/*
+        private void RANSAC()
+        {
+
+            // matching keypoints step needs at least two images
+            if (input_images.Count < 2) return;
+
+
+            RansacHomographyEstimator ransac = new RansacHomographyEstimator(0.001, 0.99);
+
+
+            Graphics graphics;
+            Pen keypointPen = new Pen(Color.GreenYellow, 2f);
+            int keypoints_cntr = 0;
+
+            ClearThumbnails();
+
+            Bitmap mergedImage = new Bitmap(input_images.Count * input_images[0].Width, input_images[0].Height); //it is assumed the images are of same size!
+            graphics = Graphics.FromImage(mergedImage);
+
+            int cumulativeWidth = 0;
+
+            for (int i = 0; i < input_images.Count; i++)
+            {
+                graphics.DrawImage(input_images[i], cumulativeWidth, 0, input_images[i].Width, input_images[i].Height);
+
+                cumulativeWidth += input_images[i].Width;
+            }
+
+            for (int i = 0; i < input_images.Count; i++)
+            {
+
+                if (i != input_images.Count - 1)
+                {
+                    matches = matcher.Match(new Bitmap(input_images[i]), new Bitmap(input_images[i + 1]), keypoints[keypoints_cntr].ToArray(), keypoints[keypoints_cntr + 1].ToArray());
+
+
+                    IntPoint[] correlationPoints1 = matches[0];
+                    IntPoint[] correlationPoints2 = matches[1];
+
+                    homography = ransac.Estimate(correlationPoints1, correlationPoints2);
+
+                    // Plot RANSAC results against correlation results
+                    correlationPoints1 = correlationPoints1.Submatrix(ransac.Inliers);
+                    correlationPoints2 = correlationPoints2.Submatrix(ransac.Inliers);
+
+
+
+                    PairsMarker pairs = new PairsMarker(correlationPoints1, correlationPoints2);
+
+                    for (int j = 0; j < pairs.Points1.Count(); j++)
+                    {
+                        graphics.DrawLine(new Pen(Color.GreenYellow, 2f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
+                    }
+
+
+                    keypoints_cntr += 2;
+                }
+
+                cumulativeWidth += input_images[0].Width;
+
+            }
+
+
+
+            ShowThumbnail(mergedImage, true);
+        }
+*/
+        private void BlendImages()
+        {
+            // 1 - 2 image
+            Blend blend = new Blend(homographyList[0], new Bitmap(input_images[0]));
+            panorama = blend.Apply(new Bitmap(input_images[1]));
+
+
+            //Blend blend2 = new Blend(homographyList[1], new Bitmap(input_images[1]));
+            //panorama = blend2.Apply(new Bitmap(input_images[2]));
+
+
+            //Concatenate concat = new Concatenate(mergedImage);
+            //Bitmap panorama = concat.Apply(mergedImage2);
+
+
+           // mergedImage.Concatenate()
+
+            ClearThumbnails();
+            ShowThumbnail(panorama, true);
+
+            // 2 - 3
+            //Blend blend = new Blend(homographyList[1], new Bitmap(input_images[1]));
+            //Bitmap mergedImage = blend.Apply(new Bitmap(input_images[2]));
+            //mergedImage = blend.Apply(mergedImage);
+            //ClearThumbnails();
+            //ShowThumbnail(mergedImage, true);
+        }
+
+        private void Main()
+        {
+            int images_count = input_images.Count;
+            for (int i = 0; i < images_count; i++)
+            {
+
+            }
+        }
+
+
+
+
+
     }
 }

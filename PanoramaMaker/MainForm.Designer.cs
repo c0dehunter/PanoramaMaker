@@ -32,9 +32,14 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInputImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.calculateKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.savePanoramaAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panoramaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sURFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.harrisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.matchKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blendImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -42,7 +47,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.matchKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -52,6 +57,7 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.panoramaToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -64,8 +70,6 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openInputImagesToolStripMenuItem,
-            this.calculateKeypointsToolStripMenuItem,
-            this.matchKeypointsToolStripMenuItem,
             this.savePanoramaAsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -80,19 +84,13 @@
             this.openInputImagesToolStripMenuItem.Text = "Load input images";
             this.openInputImagesToolStripMenuItem.Click += new System.EventHandler(this.openInputImagesToolStripMenuItem_Click);
             // 
-            // calculateKeypointsToolStripMenuItem
-            // 
-            this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
-            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.calculateKeypointsToolStripMenuItem.Text = "Detect keypoints";
-            this.calculateKeypointsToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsToolStripMenuItem_Click);
-            // 
             // savePanoramaAsToolStripMenuItem
             // 
             this.savePanoramaAsToolStripMenuItem.Name = "savePanoramaAsToolStripMenuItem";
             this.savePanoramaAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.savePanoramaAsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.savePanoramaAsToolStripMenuItem.Text = "Save panorama";
+            this.savePanoramaAsToolStripMenuItem.Click += new System.EventHandler(this.savePanoramaImageToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -101,6 +99,53 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // panoramaToolStripMenuItem
+            // 
+            this.panoramaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calculateKeypointsToolStripMenuItem,
+            this.matchKeypointsToolStripMenuItem,
+            this.blendImagesToolStripMenuItem});
+            this.panoramaToolStripMenuItem.Name = "panoramaToolStripMenuItem";
+            this.panoramaToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            this.panoramaToolStripMenuItem.Text = "Panorama";
+            // 
+            // calculateKeypointsToolStripMenuItem
+            // 
+            this.calculateKeypointsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sURFToolStripMenuItem,
+            this.harrisToolStripMenuItem});
+            this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
+            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.calculateKeypointsToolStripMenuItem.Text = "Detect keypoints";
+            // 
+            // sURFToolStripMenuItem
+            // 
+            this.sURFToolStripMenuItem.Name = "sURFToolStripMenuItem";
+            this.sURFToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.sURFToolStripMenuItem.Text = "SURF";
+            this.sURFToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsSURFToolStripMenuItem_Click);
+            // 
+            // harrisToolStripMenuItem
+            // 
+            this.harrisToolStripMenuItem.Name = "harrisToolStripMenuItem";
+            this.harrisToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.harrisToolStripMenuItem.Text = "Harris";
+            this.harrisToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsHarrisToolStripMenuItem_Click);
+            // 
+            // matchKeypointsToolStripMenuItem
+            // 
+            this.matchKeypointsToolStripMenuItem.Name = "matchKeypointsToolStripMenuItem";
+            this.matchKeypointsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.matchKeypointsToolStripMenuItem.Text = "Match keypoints";
+            this.matchKeypointsToolStripMenuItem.Click += new System.EventHandler(this.matchKeypointsToolStripMenuItem_Click);
+            // 
+            // blendImagesToolStripMenuItem
+            // 
+            this.blendImagesToolStripMenuItem.Name = "blendImagesToolStripMenuItem";
+            this.blendImagesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.blendImagesToolStripMenuItem.Text = "Blend images";
+            this.blendImagesToolStripMenuItem.Click += new System.EventHandler(this.blendImagesToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -132,7 +177,7 @@
             this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 15);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(924, 153);
             this.flowLayoutPanel1.TabIndex = 1;
@@ -144,9 +189,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.flowLayoutPanel1);
             this.groupBox1.Location = new System.Drawing.Point(9, 38);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(928, 170);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
@@ -168,13 +213,6 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // matchKeypointsToolStripMenuItem
-            // 
-            this.matchKeypointsToolStripMenuItem.Name = "matchKeypointsToolStripMenuItem";
-            this.matchKeypointsToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.matchKeypointsToolStripMenuItem.Text = "Match keypoints";
-            this.matchKeypointsToolStripMenuItem.Click += new System.EventHandler(this.matchKeypointsToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,7 +223,7 @@
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(484, 397);
             this.Name = "MainForm";
             this.Text = "PanoramaMaker";
@@ -215,6 +253,11 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripMenuItem calculateKeypointsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem matchKeypointsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem panoramaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sURFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem harrisToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem blendImagesToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
