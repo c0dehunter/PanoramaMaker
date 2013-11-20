@@ -40,6 +40,8 @@
             this.harrisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.matchKeypointsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blendImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.fastPanoramaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -48,9 +50,18 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -105,7 +116,9 @@
             this.panoramaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.calculateKeypointsToolStripMenuItem,
             this.matchKeypointsToolStripMenuItem,
-            this.blendImagesToolStripMenuItem});
+            this.blendImagesToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.fastPanoramaToolStripMenuItem});
             this.panoramaToolStripMenuItem.Name = "panoramaToolStripMenuItem";
             this.panoramaToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.panoramaToolStripMenuItem.Text = "Panorama";
@@ -116,36 +129,48 @@
             this.sURFToolStripMenuItem,
             this.harrisToolStripMenuItem});
             this.calculateKeypointsToolStripMenuItem.Name = "calculateKeypointsToolStripMenuItem";
-            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.calculateKeypointsToolStripMenuItem.Text = "Detect keypoints";
+            this.calculateKeypointsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.calculateKeypointsToolStripMenuItem.Text = "1. Detect keypoints";
             // 
             // sURFToolStripMenuItem
             // 
             this.sURFToolStripMenuItem.Name = "sURFToolStripMenuItem";
-            this.sURFToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.sURFToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sURFToolStripMenuItem.Text = "SURF";
             this.sURFToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsSURFToolStripMenuItem_Click);
             // 
             // harrisToolStripMenuItem
             // 
             this.harrisToolStripMenuItem.Name = "harrisToolStripMenuItem";
-            this.harrisToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.harrisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.harrisToolStripMenuItem.Text = "Harris";
             this.harrisToolStripMenuItem.Click += new System.EventHandler(this.calculateKeypointsHarrisToolStripMenuItem_Click);
             // 
             // matchKeypointsToolStripMenuItem
             // 
             this.matchKeypointsToolStripMenuItem.Name = "matchKeypointsToolStripMenuItem";
-            this.matchKeypointsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.matchKeypointsToolStripMenuItem.Text = "Match keypoints";
+            this.matchKeypointsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.matchKeypointsToolStripMenuItem.Text = "2. Match keypoints";
             this.matchKeypointsToolStripMenuItem.Click += new System.EventHandler(this.matchKeypointsToolStripMenuItem_Click);
             // 
             // blendImagesToolStripMenuItem
             // 
             this.blendImagesToolStripMenuItem.Name = "blendImagesToolStripMenuItem";
-            this.blendImagesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.blendImagesToolStripMenuItem.Text = "Blend images";
+            this.blendImagesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.blendImagesToolStripMenuItem.Text = "3. Blend images";
             this.blendImagesToolStripMenuItem.Click += new System.EventHandler(this.blendImagesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(171, 6);
+            // 
+            // fastPanoramaToolStripMenuItem
+            // 
+            this.fastPanoramaToolStripMenuItem.Name = "fastPanoramaToolStripMenuItem";
+            this.fastPanoramaToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.fastPanoramaToolStripMenuItem.Text = "Fast panorama";
+            this.fastPanoramaToolStripMenuItem.Click += new System.EventHandler(this.fastPanoramaToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -201,7 +226,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 566);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 727);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
             this.statusStrip1.Size = new System.Drawing.Size(946, 22);
@@ -213,11 +238,98 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.flowLayoutPanel2);
+            this.groupBox2.Location = new System.Drawing.Point(9, 209);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox2.Size = new System.Drawing.Size(928, 170);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Detected Keypoints";
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.AutoScroll = true;
+            this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel2.BackColor = System.Drawing.Color.LavenderBlush;
+            this.flowLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(2, 15);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(924, 153);
+            this.flowLayoutPanel2.TabIndex = 1;
+            this.flowLayoutPanel2.WrapContents = false;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.flowLayoutPanel3);
+            this.groupBox3.Location = new System.Drawing.Point(11, 383);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Size = new System.Drawing.Size(928, 170);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Matched Keypoints";
+            // 
+            // flowLayoutPanel3
+            // 
+            this.flowLayoutPanel3.AutoScroll = true;
+            this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel3.BackColor = System.Drawing.Color.LavenderBlush;
+            this.flowLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(2, 15);
+            this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(2);
+            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(924, 153);
+            this.flowLayoutPanel3.TabIndex = 1;
+            this.flowLayoutPanel3.WrapContents = false;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.flowLayoutPanel4);
+            this.groupBox4.Location = new System.Drawing.Point(11, 557);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Size = new System.Drawing.Size(928, 170);
+            this.groupBox4.TabIndex = 6;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Panorama";
+            // 
+            // flowLayoutPanel4
+            // 
+            this.flowLayoutPanel4.AutoScroll = true;
+            this.flowLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel4.BackColor = System.Drawing.Color.LavenderBlush;
+            this.flowLayoutPanel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(2, 15);
+            this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(2);
+            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(924, 153);
+            this.flowLayoutPanel4.TabIndex = 1;
+            this.flowLayoutPanel4.WrapContents = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(946, 588);
+            this.ClientSize = new System.Drawing.Size(946, 749);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip);
@@ -232,6 +344,9 @@
             this.groupBox1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -258,6 +373,14 @@
         private System.Windows.Forms.ToolStripMenuItem harrisToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem blendImagesToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem fastPanoramaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel4;
     }
 }
 
