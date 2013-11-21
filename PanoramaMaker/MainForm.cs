@@ -471,17 +471,21 @@ namespace PanoramaMaker
                     homography = ransac.Estimate(correlationPoints1, correlationPoints2);
 
                     // take only inliers - good matches
-                    correlationPoints1 = correlationPoints1.Submatrix(ransac.Inliers);
-                    correlationPoints2 = correlationPoints2.Submatrix(ransac.Inliers);
+                    IntPoint[] inliers1 = correlationPoints1.Submatrix(ransac.Inliers);
+                    IntPoint[] inliers2 = correlationPoints2.Submatrix(ransac.Inliers);
 
                     PairsMarker pairs = new PairsMarker(correlationPoints1, correlationPoints2.Apply(p => new IntPoint(p.X + input_images[i].Width, p.Y)));
        
-                    // draw matching pairs
+                    // draw all matching pairs
                     for (int j = 0; j < pairs.Points1.Count(); j++) {
-                        if (i % 2 == 0) graphics.DrawLine(new Pen(Color.GreenYellow, 1.5f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
-                        else            graphics.DrawLine(new Pen(Color.Red, 1.5f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
+                        if (i % 2 == 0) graphics.DrawLine(new Pen(Color.Red, 1.5f), new System.Drawing.Point(correlationPoints1[j].X + i * input_images[i].Width, correlationPoints1[j].Y), new System.Drawing.Point(correlationPoints2[j].X + (i + 1) * input_images[i].Width, correlationPoints2[j].Y));
                     }
-                  
+
+                    // draw inliers
+                    for (int j = 0; j < inliers1.Count(); j++) {
+                        if (i % 2 == 0) graphics.DrawLine(new Pen(Color.GreenYellow, 1.5f), new System.Drawing.Point(inliers1[j].X + i * input_images[i].Width, inliers1[j].Y), new System.Drawing.Point(inliers2[j].X + (i + 1) * input_images[i].Width, inliers2[j].Y));
+                        else            graphics.DrawLine(new Pen(Color.Blue, 1.5f), new System.Drawing.Point(inliers1[j].X + i * input_images[i].Width, inliers1[j].Y), new System.Drawing.Point(inliers2[j].X + (i + 1) * input_images[i].Width, inliers2[j].Y));
+                    }
                     
                     keypoints_cntr += 2;
                 }
